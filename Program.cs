@@ -99,7 +99,7 @@ namespace BountyVoiceTracker
             // phrase to kill a specific enemy type - "tracker vex", "tracker fallen on europa"
             GrammarBuilder enemyTypePhrase = new GrammarBuilder(listenPhrase);
             enemyTypePhrase.Append(updateBountyChoices);
-            enemyTypePhrase.Append(enemyTypePhrase);
+            enemyTypePhrase.Append(enemyChoices);
             enemyTypePhrase.Append(locationConnectiveChoice, 0, 1); // optional connective location word
             enemyTypePhrase.Append(locationChoices, 0, 1); // optional location
             phraseList.Add(enemyTypePhrase);
