@@ -63,7 +63,7 @@ namespace BountyVoiceTracker
 
             var weaponChoices = new Choices(new string[]
             {
-                "auto rifle", "pulse rifle", "hand cannon", "side arm", "shotgun", "sniper rifle", "trace rifle", "sub machine gun", "grenade launcher", "fusion rifle", "linear fusion rifle", "rocket launcher", "sword",
+                "auto rifle", "bow", "pulse rifle", "hand cannon", "side arm", "shotgun", "sniper rifle", "trace rifle", "sub machine gun", "machine gun", "grenade launcher", "fusion rifle", "linear fusion rifle", "rocket launcher", "sword",
             });
             var abilityChoice = new Choices(new string[]
             {
@@ -276,12 +276,12 @@ namespace BountyVoiceTracker
 
             if (!activeBounties.Any())
             {
-                Console.WriteLine("No tracked bounties. try adding one by saying:");
-                Console.WriteLine($"->\"{LISTEN_WORD} add sword\".");
-                Console.WriteLine($"->\"{LISTEN_WORD} add arc in pvp\".");
-                Console.WriteLine($"->\"{LISTEN_WORD} add hand cannon on europa\".");
-                Console.WriteLine($"->\"{LISTEN_WORD} add crucible\".");
-                Console.WriteLine($"->\"{LISTEN_WORD} add arc in vanguard\".");
+                Console.WriteLine("No tracked bounties. Try adding one by saying:");
+                Console.WriteLine($"-->\"{LISTEN_WORD} add sword\".");
+                Console.WriteLine($"-->\"{LISTEN_WORD} add arc in pvp\".");
+                Console.WriteLine($"-->\"{LISTEN_WORD} add hand cannon on europa\".");
+                Console.WriteLine($"-->\"{LISTEN_WORD} add crucible\".");
+                Console.WriteLine($"-->\"{LISTEN_WORD} add arc in vanguard\".");
             }
             else
             {
