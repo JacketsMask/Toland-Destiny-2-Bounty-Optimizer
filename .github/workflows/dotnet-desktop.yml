@@ -23,5 +23,4 @@ jobs:
       - name: Test
         run: dotnet test --no-restore --verbosity normal
       - name: Publish
-        run: dotnet publish BountyVoiceControl.csproj -c Release -o release — nologo
-        
+        run: dotnet publish Destiny-2-Bounty-Voice-Control/BountyVoiceControl.csproj -c Release -o release — nologo
