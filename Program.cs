@@ -20,10 +20,7 @@ namespace BountyVoiceTracker
         {
 
             // Create an in-process speech recognizer for the en-US locale.  
-            using (
-            SpeechRecognitionEngine recognizer =
-              new SpeechRecognitionEngine(
-                new System.Globalization.CultureInfo("en-US")))
+            using (SpeechRecognitionEngine recognizer = new SpeechRecognitionEngine( new System.Globalization.CultureInfo("en-US")))
             {
 
                 // Create and load a dictation grammar.
