@@ -60,7 +60,7 @@ namespace BountyVoiceTracker
 
             var weaponChoices = new Choices(new string[]
             {
-                "auto rifle", "bow", "pulse rifle", "hand cannon", "side arm", "shotgun", "sniper rifle", "trace rifle", "sub machine gun", "machine gun", "grenade launcher", "fusion rifle", "linear fusion rifle", "rocket launcher", "sword",
+                "auto rifle", "bow", "scout rifle", "pulse rifle", "hand cannon", "side arm", "shotgun", "sniper rifle", "trace rifle", "sub machine gun", "smg", "machine gun", "grenade launcher", "fusion rifle", "linear fusion rifle", "rocket launcher", "sword",
             });
             var abilityChoice = new Choices(new string[]
             {
@@ -71,7 +71,7 @@ namespace BountyVoiceTracker
                 "rapid", "groups", "precision", "single life", "void suppressed", "arc blinded"
             });
             var locationConnectiveChoice = new Choices(new string[] { "on", "in" });
-            var locationChoices = new Choices(new string[] { "neptune", "europa", "throne world", "eternity", "dreaming city", "nessus", "moon", "edz", "cosmodrome", "pvp", "gambit", "vanguard" });
+            var locationChoices = new Choices(new string[] { "neptune", "europa", "throne world", "eternity", "dreaming city", "nessus", "moon", "edz", "ee dee zee", "cosmodrome", "pvp", "gambit", "vanguard" });
             var activityChoices = new Choices(new string[] { "crucible", "iron banner", "gambit", "vanguard", "strikes", "nightfall" });
 
 
