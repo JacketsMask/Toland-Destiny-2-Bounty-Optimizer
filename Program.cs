@@ -60,7 +60,7 @@ namespace BountyVoiceTracker
 
             var weaponChoices = new Choices(new string[]
             {
-                "auto rifle", "bow", "scout rifle", "pulse rifle", "hand cannon", "side arm", "shotgun", "sniper rifle", "trace rifle", "sub machine gun", "smg", "machine gun", "grenade launcher", "fusion rifle", "linear fusion rifle", "rocket launcher", "sword",
+                "auto rifle", "bow", "scout rifle", "pulse rifle", "hand cannon", "side arm", "shotgun", "sniper rifle", "trace rifle", "sub machine gun", "smg", "machine gun", "grenade launcher", "fusion rifle", "linear fusion rifle", "rocket launcher", "sword", "glaive"
             });
             var abilityChoice = new Choices(new string[]
             {
@@ -113,7 +113,7 @@ namespace BountyVoiceTracker
             // phase for weapon specific kills - "tracker add sword", "tracker add hand cannon on europa"
             GrammarBuilder weaponPhrase = new GrammarBuilder(listenPhrase);
             weaponPhrase.Append(updateBountyChoices);
-            weaponPhrase.Append(weaponChoices);
+            weaponPhrase.Append(weaponChoices, 1, 3); //1 to three weapon types
             weaponPhrase.Append(locationConnectiveChoice, 0, 1); // optional connective location word
             weaponPhrase.Append(locationChoices, 0, 1); // optional location
             phraseList.Add(weaponPhrase);
