@@ -71,8 +71,9 @@ namespace BountyVoiceTracker
                 "rapid", "groups", "precision", "single life", "void suppressed", "arc blinded"
             });
             var locationConnectiveChoice = new Choices(new string[] { "on", "in" });
+            var activityChoices = new Choices(new string[] { "lost sector", "public events" });
             var locationChoices = new Choices(new string[] { "neptune", "europa", "throne world", "eternity", "dreaming city", "nessus", "moon", "edz", "ee dee zee", "cosmodrome", "pvp", "gambit", "vanguard", "event", "seasonal" });
-            var activityChoices = new Choices(new string[] { "crucible", "iron banner", "gambit", "vanguard", "strikes", "nightfall" });
+            var playlistChoices = new Choices(new string[] { "crucible", "iron banner", "gambit", "vanguard", "strikes", "nightfall" });
 
 
             var listenPhrase = new Choices(new string[] { LISTEN_WORD });
@@ -134,11 +135,19 @@ namespace BountyVoiceTracker
             abilityPhrase.Append(locationChoices, 0, 1); // optional location
             phraseList.Add(abilityPhrase);
 
-            // phrase for adding activity completions - "tracker add crucible", "tracker add vanguard"
+            // phrase for adding activity completions - "tracker add lost sector neptune", "tracker add public events cosmodrome"
             GrammarBuilder activityPhrase = new GrammarBuilder(listenPhrase);
             activityPhrase.Append(updateBountyChoices);
-            activityPhrase.Append(activityChoices);
+            activityPhrase.Append(activityPhrase);
+            activityPhrase.Append(locationConnectiveChoice, 0, 1); // optional connective location word
+            activityPhrase.Append(locationChoices, 0, 1); // optional location
             phraseList.Add(activityPhrase);
+
+            // phrase for adding playlist completions - "tracker add crucible", "tracker add vanguard"
+            GrammarBuilder playlistPhrase = new GrammarBuilder(listenPhrase);
+            playlistPhrase.Append(updateBountyChoices);
+            playlistPhrase.Append(playlistChoices);
+            phraseList.Add(playlistPhrase);
 
             // combine grammar builder phrases into a new grammar
             Choices grammarChoices = new Choices(phraseList.ToArray());
