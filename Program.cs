@@ -71,7 +71,7 @@ namespace BountyVoiceTracker
                 "rapid", "groups", "precision", "single life", "void suppressed", "arc blinded"
             });
             var locationConnectiveChoice = new Choices(new string[] { "on", "in" });
-            var locationChoices = new Choices(new string[] { "neptune", "europa", "throne world", "eternity", "dreaming city", "nessus", "moon", "edz", "ee dee zee", "cosmodrome", "pvp", "gambit", "vanguard" });
+            var locationChoices = new Choices(new string[] { "neptune", "europa", "throne world", "eternity", "dreaming city", "nessus", "moon", "edz", "ee dee zee", "cosmodrome", "pvp", "gambit", "vanguard", "event", "seasonal" });
             var activityChoices = new Choices(new string[] { "crucible", "iron banner", "gambit", "vanguard", "strikes", "nightfall" });
 
 
