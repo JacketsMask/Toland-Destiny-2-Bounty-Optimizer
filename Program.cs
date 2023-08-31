@@ -66,6 +66,10 @@ namespace BountyVoiceTracker
             {
                 "abilities", "melee", "grenade", "super", "finisher"
             });
+            var ammoChoice = new Choices(new string[]
+            {
+                "primary", "special", "heavy"
+            });
             var killTypeChoice = new Choices(new string[]
             {
                 "rapid", "groups", "precision", "single life", "void suppressed", "arc blinded"
@@ -109,6 +113,14 @@ namespace BountyVoiceTracker
             killTypePhrase.Append(locationConnectiveChoice, 0, 1); // optional connective location word
             killTypePhrase.Append(locationChoices, 0, 1); // optional location
             phraseList.Add(killTypePhrase);
+
+            // phrase to kill targets with a specific ammo - "tracker add primary", "tracker add heavy on nessus"
+            GrammarBuilder ammoTypePhrase = new GrammarBuilder(listenPhrase);
+            ammoTypePhrase.Append(updateBountyChoices);
+            ammoTypePhrase.Append(ammoChoice);
+            ammoTypePhrase.Append(locationConnectiveChoice, 0, 1); // optional connective location word
+            ammoTypePhrase.Append(locationChoices, 0, 1); // optional location
+            phraseList.Add(ammoTypePhrase);
 
             // phase for weapon specific kills - "tracker add sword", "tracker add hand cannon on europa"
             GrammarBuilder weaponPhrase = new GrammarBuilder(listenPhrase);
