@@ -68,7 +68,7 @@ namespace BountyVoiceTracker
             });
             var ammoChoice = new Choices(new string[]
             {
-                "primary", "special", "heavy"
+                "kinetic", "energy", "primary", "special", "heavy", 
             });
             var killTypeChoice = new Choices(new string[]
             {
