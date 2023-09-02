@@ -56,7 +56,7 @@ namespace BountyVoiceTracker
             var clearChoice = new Choices("clear");
 
             var singeChoices = new Choices(new string[] { "arc", "solar", "void", "stasis", "strand" });
-            var enemyChoices = new Choices(new string[] { "fallen", "vex", "taken", "scorn", "cabal", "hive", "lucent hive", "player" });
+            var enemyChoices = new Choices(new string[] { "fallen", "vex", "taken", "scorn", "cabal", "hive", "lucent hive", "combatants", "player" });
 
             var weaponChoices = new Choices(new string[]
             {
@@ -75,7 +75,7 @@ namespace BountyVoiceTracker
                 "rapid", "groups", "precision", "single life", "void suppressed", "arc blinded"
             });
             var locationConnectiveChoice = new Choices(new string[] { "on", "in" });
-            var activityChoices = new Choices(new string[] { "lost sector", "public event" });
+            var activityChoices = new Choices(new string[] { "lost sector", "public event", "patrol" });
             var locationChoices = new Choices(new string[] { "neptune", "europa", "throne world", "eternity", "dreaming city", "nessus", "moon", "edz", "ee dee zee", "cosmodrome", "pvp", "gambit", "vanguard", "event", "seasonal" });
             var playlistChoices = new Choices(new string[] { "crucible", "iron banner", "gambit", "vanguard", "strikes", "nightfall" });
 
@@ -147,9 +147,10 @@ namespace BountyVoiceTracker
             abilityPhrase.Append(locationChoices, 0, 1); // optional location
             phraseList.Add(abilityPhrase);
 
-            // phrase for adding activity completions - "tracker add lost sector neptune", "tracker add public events cosmodrome"
+            // phrase for adding activity completions - "tracker add lost sector neptune", "tracker add arc public events cosmodrome"
             GrammarBuilder activityPhrase = new GrammarBuilder(listenPhrase);
             activityPhrase.Append(updateBountyChoices);
+            activityPhrase.Append(singeChoices);
             activityPhrase.Append(activityChoices);
             activityPhrase.Append(locationConnectiveChoice, 0, 1); // optional connective location word
             activityPhrase.Append(locationChoices, 0, 1); // optional location
