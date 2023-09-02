@@ -75,7 +75,7 @@ namespace BountyVoiceTracker
                 "rapid", "groups", "precision", "single life", "void suppressed", "arc blinded"
             });
             var locationConnectiveChoice = new Choices(new string[] { "on", "in" });
-            var activityChoices = new Choices(new string[] { "lost sector", "public events" });
+            var activityChoices = new Choices(new string[] { "lost sector", "public event" });
             var locationChoices = new Choices(new string[] { "neptune", "europa", "throne world", "eternity", "dreaming city", "nessus", "moon", "edz", "ee dee zee", "cosmodrome", "pvp", "gambit", "vanguard", "event", "seasonal" });
             var playlistChoices = new Choices(new string[] { "crucible", "iron banner", "gambit", "vanguard", "strikes", "nightfall" });
 
@@ -150,7 +150,7 @@ namespace BountyVoiceTracker
             // phrase for adding activity completions - "tracker add lost sector neptune", "tracker add public events cosmodrome"
             GrammarBuilder activityPhrase = new GrammarBuilder(listenPhrase);
             activityPhrase.Append(updateBountyChoices);
-            activityPhrase.Append(activityPhrase);
+            activityPhrase.Append(activityChoices);
             activityPhrase.Append(locationConnectiveChoice, 0, 1); // optional connective location word
             activityPhrase.Append(locationChoices, 0, 1); // optional location
             phraseList.Add(activityPhrase);
