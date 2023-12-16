@@ -11,6 +11,7 @@ namespace BountyVoiceTracker
     internal class Program
     {
         private const string LISTEN_WORD = "tracker";
+        private const string SAVE_FILE = "saved-bounties.txt";
 
         static readonly List<string> activeBounties = new List<string>();
         static Tuple<CommandType, string> lastCommand;
@@ -20,7 +21,7 @@ namespace BountyVoiceTracker
         {
 
             // Create an in-process speech recognizer for the en-US locale.  
-            using (SpeechRecognitionEngine recognizer = new SpeechRecognitionEngine( new System.Globalization.CultureInfo("en-US")))
+            using (SpeechRecognitionEngine recognizer = new SpeechRecognitionEngine(new System.Globalization.CultureInfo("en-US")))
             {
 
                 // Create and load a dictation grammar.
@@ -54,6 +55,8 @@ namespace BountyVoiceTracker
             var updateBountyChoices = new Choices(new string[] { "add", "remove" });
             var undoChoice = new Choices("undo");
             var clearChoice = new Choices("clear");
+            var saveChoice = new Choices("save");
+            var loadChoice = new Choices("load");
 
             var singeChoices = new Choices(new string[] { "arc", "solar", "void", "stasis", "strand" });
             var enemyChoices = new Choices(new string[] { "fallen", "vex", "taken", "scorn", "cabal", "hive", "lucent hive", "combatants", "player" });
@@ -68,7 +71,7 @@ namespace BountyVoiceTracker
             });
             var ammoChoice = new Choices(new string[]
             {
-                "kinetic", "energy", "primary", "special", "heavy", 
+                "kinetic", "energy", "primary", "special", "heavy",
             });
             var killTypeChoice = new Choices(new string[]
             {
@@ -76,7 +79,7 @@ namespace BountyVoiceTracker
             });
             var locationConnectiveChoice = new Choices(new string[] { "on", "in" });
             var activityChoices = new Choices(new string[] { "lost sector", "public event", "patrol" });
-            var locationChoices = new Choices(new string[] { "neptune", "europa", "throne world", "eternity", "dreaming city", "nessus", "moon", "edz", "ee dee zee", "cosmodrome", "pvp", "gambit", "vanguard", "event", "seasonal" });
+            var locationChoices = new Choices(new string[] { "neptune", "europa", "throne world", "eternity", "dreaming city", "nessus", "moon", "edz", "ee dee zee", "cosmodrome", "neomunna", "pvp", "gambit", "vanguard", "event", "seasonal" });
             var playlistChoices = new Choices(new string[] { "crucible", "iron banner", "gambit", "vanguard", "strikes", "nightfall" });
 
 
@@ -97,6 +100,16 @@ namespace BountyVoiceTracker
             GrammarBuilder clearPhrase = new GrammarBuilder(listenPhrase);
             clearPhrase.Append(clearChoice);
             phraseList.Add(clearPhrase);
+
+            // phrase to save the bounty list
+            GrammarBuilder savePhrase = new GrammarBuilder(listenPhrase);
+            savePhrase.Append(saveChoice);
+            phraseList.Add(savePhrase);
+
+            // phrase to load the bounty list
+            GrammarBuilder loadPhrase = new GrammarBuilder(listenPhrase);
+            loadPhrase.Append(loadChoice);
+            phraseList.Add(loadPhrase);
 
             // phrase to kill a specific enemy type - "tracker vex", "tracker fallen on europa"
             GrammarBuilder enemyTypePhrase = new GrammarBuilder(listenPhrase);
@@ -133,7 +146,7 @@ namespace BountyVoiceTracker
             // phrase for singe specific kills - "tracker add arc", "tracker add solar on europa"
             GrammarBuilder genericSingePhrase = new GrammarBuilder(listenPhrase);
             genericSingePhrase.Append(updateBountyChoices);
-            genericSingePhrase.Append(singeChoices);
+            genericSingePhrase.Append(singeChoices, 1, 3);
             genericSingePhrase.Append(locationConnectiveChoice, 0, 1); // optional connective location word
             genericSingePhrase.Append(locationChoices, 0, 1); // optional location
             phraseList.Add(genericSingePhrase);
@@ -141,7 +154,7 @@ namespace BountyVoiceTracker
             // phrase for ability kills - "tracker add melee", "tracker add arc abilities", "tracker add grenade on throne world"
             GrammarBuilder abilityPhrase = new GrammarBuilder(listenPhrase);
             abilityPhrase.Append(updateBountyChoices);
-            abilityPhrase.Append(singeChoices, 0, 1);
+            abilityPhrase.Append(singeChoices, 0, 3);
             abilityPhrase.Append(abilityChoice);
             abilityPhrase.Append(locationConnectiveChoice, 0, 1); // optional connective location word
             abilityPhrase.Append(locationChoices, 0, 1); // optional location
@@ -150,7 +163,7 @@ namespace BountyVoiceTracker
             // phrase for adding activity completions - "tracker add lost sector neptune", "tracker add arc public events cosmodrome"
             GrammarBuilder activityPhrase = new GrammarBuilder(listenPhrase);
             activityPhrase.Append(updateBountyChoices);
-            activityPhrase.Append(singeChoices);
+            activityPhrase.Append(singeChoices, 0, 1);
             activityPhrase.Append(activityChoices);
             activityPhrase.Append(locationConnectiveChoice, 0, 1); // optional connective location word
             activityPhrase.Append(locationChoices, 0, 1); // optional location
@@ -188,7 +201,7 @@ namespace BountyVoiceTracker
 
             // handle the special case of listening
             if (command.Contains("stop listening"))
-            { 
+            {
                 listening = false;
                 Console.WriteLine("{ NOT LISTENING }");
                 return;
@@ -224,6 +237,18 @@ namespace BountyVoiceTracker
                 string newCommand = command.Replace($"{LISTEN_WORD} clear", string.Empty);
                 ProcessCommand(newCommand, CommandType.CLEAR);
                 lastCommand = new Tuple<CommandType, string>(CommandType.CLEAR, newCommand);
+            }
+            else if (command.Contains("save"))
+            {
+                string newCommand = command.Replace($"{LISTEN_WORD} save", string.Empty);
+                ProcessCommand(newCommand, CommandType.SAVE);
+                lastCommand = new Tuple<CommandType, string>(CommandType.SAVE, newCommand);
+            }
+            else if (command.Contains("load"))
+            {
+                string newCommand = command.Replace($"{LISTEN_WORD} load", string.Empty);
+                ProcessCommand(newCommand, CommandType.LOAD);
+                lastCommand = new Tuple<CommandType, string>(CommandType.LOAD, newCommand);
             }
             else
             { // unhandled text - doesn't fit into a recognized command somehow
@@ -261,6 +286,16 @@ namespace BountyVoiceTracker
                                     ProcessCommand(lastCommand.Item2, CommandType.ADD);
                                     break;
                                 }
+                            case CommandType.SAVE:
+                                {
+                                    // special case: don't undo a save
+                                    break;
+                                }
+                            case CommandType.LOAD:
+                                {
+                                    // special case: don't undo a load
+                                    break;
+                                }
                         }
                         return;
                     }
@@ -277,6 +312,24 @@ namespace BountyVoiceTracker
                 case CommandType.CLEAR:
                     {
                         activeBounties.Clear();
+                        return;
+                    }
+                case CommandType.SAVE:
+                    {
+                        System.IO.File.WriteAllLines(SAVE_FILE, activeBounties);
+                        return;
+                    }
+                case CommandType.LOAD:
+                    {
+                        if (System.IO.File.Exists(SAVE_FILE))
+                        {
+                            string[] loadedBounties = System.IO.File.ReadAllLines(SAVE_FILE);
+                            if (loadedBounties.Length > 0)
+                            {
+                                activeBounties.Clear();
+                                activeBounties.AddRange(loadedBounties);
+                            }
+                        }
                         return;
                     }
             }
@@ -324,7 +377,9 @@ namespace BountyVoiceTracker
             CLEAR,
             REMOVE,
             UNDO,
-            UNHANDLED
+            SAVE,
+            LOAD,
+            UNHANDLED,
         }
     }
 }
