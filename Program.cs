@@ -59,6 +59,7 @@ namespace BountyVoiceTracker
             var loadChoice = new Choices("load");
 
             var singeChoices = new Choices(new string[] { "arc", "solar", "void", "stasis", "strand" });
+            var enemyModifierChoices = new Choices(new string[] { "powerful" });
             var enemyChoices = new Choices(new string[] { "fallen", "vex", "taken", "scorn", "cabal", "hive", "lucent hive", "combatants", "player" });
 
             var weaponChoices = new Choices(new string[]
@@ -71,7 +72,7 @@ namespace BountyVoiceTracker
             });
             var ammoChoice = new Choices(new string[]
             {
-                "kinetic", "energy", "primary", "special", "heavy",
+                "kinetic", "energy", "primary", "special", "heavy", "snowballs", "gifts"
             });
             var killTypeChoice = new Choices(new string[]
             {
@@ -114,6 +115,7 @@ namespace BountyVoiceTracker
             // phrase to kill a specific enemy type - "tracker vex", "tracker fallen on europa"
             GrammarBuilder enemyTypePhrase = new GrammarBuilder(listenPhrase);
             enemyTypePhrase.Append(updateBountyChoices);
+            enemyTypePhrase.Append(enemyModifierChoices, 0, 1);
             enemyTypePhrase.Append(enemyChoices);
             enemyTypePhrase.Append(locationConnectiveChoice, 0, 1); // optional connective location word
             enemyTypePhrase.Append(locationChoices, 0, 1); // optional location
@@ -138,7 +140,7 @@ namespace BountyVoiceTracker
             // phase for weapon specific kills - "tracker add sword", "tracker add hand cannon on europa"
             GrammarBuilder weaponPhrase = new GrammarBuilder(listenPhrase);
             weaponPhrase.Append(updateBountyChoices);
-            weaponPhrase.Append(weaponChoices, 1, 3); //1 to three weapon types
+            weaponPhrase.Append(weaponChoices, 1, 4); //1 to four weapon types
             weaponPhrase.Append(locationConnectiveChoice, 0, 1); // optional connective location word
             weaponPhrase.Append(locationChoices, 0, 1); // optional location
             phraseList.Add(weaponPhrase);
@@ -163,7 +165,7 @@ namespace BountyVoiceTracker
             // phrase for adding activity completions - "tracker add lost sector neptune", "tracker add arc public events cosmodrome"
             GrammarBuilder activityPhrase = new GrammarBuilder(listenPhrase);
             activityPhrase.Append(updateBountyChoices);
-            activityPhrase.Append(singeChoices, 0, 1);
+            activityPhrase.Append(singeChoices, 0, 2);
             activityPhrase.Append(activityChoices);
             activityPhrase.Append(locationConnectiveChoice, 0, 1); // optional connective location word
             activityPhrase.Append(locationChoices, 0, 1); // optional location
