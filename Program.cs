@@ -1,4 +1,6 @@
-﻿using System;
+﻿using BountyVoiceControl.Resources;
+using SQLiteEZMode;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -12,20 +14,58 @@ namespace BountyVoiceTracker
     {
         private const string LISTEN_WORD = "tracker";
         private const string SAVE_FILE = "saved-bounties.txt";
+        private static readonly string DATABASE_FILE = System.IO.Path.Combine("resources", "bounty-info.sqlite3");
 
         static readonly List<string> activeBounties = new List<string>();
         static Tuple<CommandType, string> lastCommand;
         static bool listening = true;
 
+        /// Data loaded from the sqlite3 database file
+
+        private static IEnumerable<AbilityTypes> abilityTypes;
+        private static IEnumerable<ActivityTypes> activityTypes;
+        private static IEnumerable<AmmoTypes> ammoTypes;
+        private static IEnumerable<DestinationTypes> destinationTypes;
+        private static IEnumerable<ElementTypes> elementTypes;
+        private static IEnumerable<EliminationTypes> eliminationTypes;
+        private static IEnumerable<EnemyModifierTypes> enemyModifierTypes;
+        private static IEnumerable<EnemyTypes> enemyTypes;
+        private static IEnumerable<PlayListTypes> playlistTypes;
+        private static IEnumerable<WeaponTypes> weaponTypes;
+
+        static void LoadSqliteData()
+        {
+            if (!System.IO.File.Exists(DATABASE_FILE))
+            {
+                throw new System.IO.FileNotFoundException($"Unable to load {DATABASE_FILE}.");
+            }
+            using (EzDb ezDb = new EzDb(DATABASE_FILE, OperationModes.EXPLICIT_TAGGING))
+            {
+                ezDb.VerifyType<WeaponTypes>();
+                abilityTypes = ezDb.SelectAll<AbilityTypes>();
+                activityTypes = ezDb.SelectAll<ActivityTypes>();
+                ammoTypes = ezDb.SelectAll<AmmoTypes>();
+                destinationTypes = ezDb.SelectAll<DestinationTypes>();
+                elementTypes = ezDb.SelectAll<ElementTypes>();
+                eliminationTypes = ezDb.SelectAll<EliminationTypes>();
+                enemyModifierTypes = ezDb.SelectAll<EnemyModifierTypes>();
+                enemyTypes = ezDb.SelectAll<EnemyTypes>();
+                playlistTypes = ezDb.SelectAll<PlayListTypes>();
+                weaponTypes = ezDb.SelectAll<WeaponTypes>();
+            }
+        }
+
         static void Main(string[] args)
         {
+            LoadSqliteData();
+
 
             // Create an in-process speech recognizer for the en-US locale.  
             using (SpeechRecognitionEngine recognizer = new SpeechRecognitionEngine(new System.Globalization.CultureInfo("en-US")))
             {
 
                 // Create and load a dictation grammar.
-                var d2BountyGrammar = BuildDestiny2Grammar();
+                var d2BountyGrammar = BuildDestiny2GrammarFromLoadedData();
                 recognizer.LoadGrammar(d2BountyGrammar);
 
                 // Add a handler for the speech recognized event.  
@@ -49,7 +89,7 @@ namespace BountyVoiceTracker
             }
         }
 
-        static Grammar BuildDestiny2Grammar()
+        static Grammar BuildDestiny2GrammarFromLoadedData()
         {
             var toggleListeningChoices = new Choices(new string[] { "stop listening", "start listening" });
             var updateBountyChoices = new Choices(new string[] { "add", "remove" });
@@ -58,31 +98,19 @@ namespace BountyVoiceTracker
             var saveChoice = new Choices("save");
             var loadChoice = new Choices("load");
 
-            var singeChoices = new Choices(new string[] { "arc", "solar", "void", "stasis", "strand" });
-            var enemyModifierChoices = new Choices(new string[] { "powerful" });
-            var enemyChoices = new Choices(new string[] { "fallen", "vex", "taken", "scorn", "cabal", "hive", "lucent hive", "combatants", "player" });
+            //Choices singeChoices = GenerateChoices(elementTypes);
+            Choices abilityChoice = CombineChoicesFromDbType(abilityTypes);
+            Choices activityChoice = CombineChoicesFromDbType(activityTypes);
+            Choices ammoChoice = CombineChoicesFromDbType(ammoTypes);
+            Choices destinationChoice = CombineChoicesFromDbType(destinationTypes);
+            Choices elementChoice = CombineChoicesFromDbType(elementTypes);
+            Choices eliminationChoice = CombineChoicesFromDbType(eliminationTypes);
+            Choices enemyModifierChoice = CombineChoicesFromDbType(enemyModifierTypes);
+            Choices enemyChoice = CombineChoicesFromDbType(enemyModifierTypes);
+            Choices playListChoice = CombineChoicesFromDbType(playlistTypes);
+            Choices weaponChoice = CombineChoicesFromDbType(weaponTypes);
 
-            var weaponChoices = new Choices(new string[]
-            {
-                "auto rifle", "bow", "scout rifle", "pulse rifle", "hand cannon", "side arm", "shotgun", "sniper rifle", "trace rifle", "sub machine gun", "smg", "machine gun", "grenade launcher", "fusion rifle", "linear fusion rifle", "rocket launcher", "sword", "glaive"
-            });
-            var abilityChoice = new Choices(new string[]
-            {
-                "abilities", "melee", "grenade", "super", "finisher"
-            });
-            var ammoChoice = new Choices(new string[]
-            {
-                "kinetic", "energy", "primary", "special", "heavy", "snowballs", "gifts"
-            });
-            var killTypeChoice = new Choices(new string[]
-            {
-                "rapid", "groups", "precision", "single life", "void suppressed", "arc blinded"
-            });
-            var locationConnectiveChoice = new Choices(new string[] { "on", "in" });
-            var activityChoices = new Choices(new string[] { "lost sector", "public event", "patrol" });
-            var locationChoices = new Choices(new string[] { "neptune", "europa", "throne world", "eternity", "dreaming city", "nessus", "moon", "edz", "ee dee zee", "cosmodrome", "neomunna", "pvp", "gambit", "vanguard", "event", "seasonal" });
-            var playlistChoices = new Choices(new string[] { "crucible", "iron banner", "gambit", "vanguard", "strikes", "nightfall" });
-
+            var destinationConnectiveChoice = new Choices(new string[] { "on", "in" });
 
             var listenPhrase = new Choices(new string[] { LISTEN_WORD });
             List<GrammarBuilder> phraseList = new List<GrammarBuilder>();
@@ -115,66 +143,66 @@ namespace BountyVoiceTracker
             // phrase to kill a specific enemy type - "tracker vex", "tracker fallen on europa"
             GrammarBuilder enemyTypePhrase = new GrammarBuilder(listenPhrase);
             enemyTypePhrase.Append(updateBountyChoices);
-            enemyTypePhrase.Append(enemyModifierChoices, 0, 1);
-            enemyTypePhrase.Append(enemyChoices);
-            enemyTypePhrase.Append(locationConnectiveChoice, 0, 1); // optional connective location word
-            enemyTypePhrase.Append(locationChoices, 0, 1); // optional location
+            enemyTypePhrase.Append(enemyModifierChoice, 0, 1);
+            enemyTypePhrase.Append(enemyChoice);
+            enemyTypePhrase.Append(destinationConnectiveChoice, 0, 1); // optional connective location word
+            enemyTypePhrase.Append(destinationChoice, 0, 1); // optional location
             phraseList.Add(enemyTypePhrase);
 
             // phrase to kill targets in a specific way - "tracker rapid", "tracker precision on europa"
             GrammarBuilder killTypePhrase = new GrammarBuilder(listenPhrase);
             killTypePhrase.Append(updateBountyChoices);
-            killTypePhrase.Append(killTypeChoice);
-            killTypePhrase.Append(locationConnectiveChoice, 0, 1); // optional connective location word
-            killTypePhrase.Append(locationChoices, 0, 1); // optional location
+            killTypePhrase.Append(eliminationChoice);
+            killTypePhrase.Append(destinationConnectiveChoice, 0, 1); // optional connective location word
+            killTypePhrase.Append(destinationChoice, 0, 1); // optional location
             phraseList.Add(killTypePhrase);
 
             // phrase to kill targets with a specific ammo - "tracker add primary", "tracker add heavy on nessus"
             GrammarBuilder ammoTypePhrase = new GrammarBuilder(listenPhrase);
             ammoTypePhrase.Append(updateBountyChoices);
             ammoTypePhrase.Append(ammoChoice);
-            ammoTypePhrase.Append(locationConnectiveChoice, 0, 1); // optional connective location word
-            ammoTypePhrase.Append(locationChoices, 0, 1); // optional location
+            ammoTypePhrase.Append(destinationConnectiveChoice, 0, 1); // optional connective location word
+            ammoTypePhrase.Append(destinationChoice, 0, 1); // optional location
             phraseList.Add(ammoTypePhrase);
 
             // phase for weapon specific kills - "tracker add sword", "tracker add hand cannon on europa"
             GrammarBuilder weaponPhrase = new GrammarBuilder(listenPhrase);
             weaponPhrase.Append(updateBountyChoices);
-            weaponPhrase.Append(weaponChoices, 1, 4); //1 to four weapon types
-            weaponPhrase.Append(locationConnectiveChoice, 0, 1); // optional connective location word
-            weaponPhrase.Append(locationChoices, 0, 1); // optional location
+            weaponPhrase.Append(weaponChoice, 1, 4); //1 to four weapon types
+            weaponPhrase.Append(destinationConnectiveChoice, 0, 1); // optional connective location word
+            weaponPhrase.Append(destinationChoice, 0, 1); // optional location
             phraseList.Add(weaponPhrase);
 
             // phrase for singe specific kills - "tracker add arc", "tracker add solar on europa"
             GrammarBuilder genericSingePhrase = new GrammarBuilder(listenPhrase);
             genericSingePhrase.Append(updateBountyChoices);
-            genericSingePhrase.Append(singeChoices, 1, 3);
-            genericSingePhrase.Append(locationConnectiveChoice, 0, 1); // optional connective location word
-            genericSingePhrase.Append(locationChoices, 0, 1); // optional location
+            genericSingePhrase.Append(elementChoice, 1, 3);
+            genericSingePhrase.Append(destinationConnectiveChoice, 0, 1); // optional connective location word
+            genericSingePhrase.Append(destinationChoice, 0, 1); // optional location
             phraseList.Add(genericSingePhrase);
 
             // phrase for ability kills - "tracker add melee", "tracker add arc abilities", "tracker add grenade on throne world"
             GrammarBuilder abilityPhrase = new GrammarBuilder(listenPhrase);
             abilityPhrase.Append(updateBountyChoices);
-            abilityPhrase.Append(singeChoices, 0, 3);
+            abilityPhrase.Append(elementChoice, 0, 3);
             abilityPhrase.Append(abilityChoice);
-            abilityPhrase.Append(locationConnectiveChoice, 0, 1); // optional connective location word
-            abilityPhrase.Append(locationChoices, 0, 1); // optional location
+            abilityPhrase.Append(destinationConnectiveChoice, 0, 1); // optional connective location word
+            abilityPhrase.Append(destinationChoice, 0, 1); // optional location
             phraseList.Add(abilityPhrase);
 
             // phrase for adding activity completions - "tracker add lost sector neptune", "tracker add arc public events cosmodrome"
             GrammarBuilder activityPhrase = new GrammarBuilder(listenPhrase);
             activityPhrase.Append(updateBountyChoices);
-            activityPhrase.Append(singeChoices, 0, 2);
-            activityPhrase.Append(activityChoices);
-            activityPhrase.Append(locationConnectiveChoice, 0, 1); // optional connective location word
-            activityPhrase.Append(locationChoices, 0, 1); // optional location
+            activityPhrase.Append(elementChoice, 0, 2);
+            activityPhrase.Append(activityChoice);
+            activityPhrase.Append(destinationConnectiveChoice, 0, 1); // optional connective location word
+            activityPhrase.Append(destinationChoice, 0, 1); // optional location
             phraseList.Add(activityPhrase);
 
             // phrase for adding playlist completions - "tracker add crucible", "tracker add vanguard"
             GrammarBuilder playlistPhrase = new GrammarBuilder(listenPhrase);
             playlistPhrase.Append(updateBountyChoices);
-            playlistPhrase.Append(playlistChoices);
+            playlistPhrase.Append(playListChoice);
             phraseList.Add(playlistPhrase);
 
             // combine grammar builder phrases into a new grammar
@@ -183,6 +211,16 @@ namespace BountyVoiceTracker
             completeGrammar.Name = "Bounty Voice Tracker Grammar";
 
             return completeGrammar;
+        }
+
+        static Choices CombineChoicesFromDbType(IEnumerable<BaseDbType> types)
+        {
+            Choices choices = new Choices();
+            foreach (var type in types)
+            {
+                choices.Add(type.GenerateChoices());
+            }
+            return choices;
         }
 
         // Handle the SpeechRecognized event.  

@@ -5,5 +5,8 @@
 
 using System.Diagnostics.CodeAnalysis;
 
-[assembly: SuppressMessage("Interoperability", "CA1416:Validate platform compatibility", Justification = "<Pending>", Scope = "member", Target = "~M:BountyVoiceTracker.Program.Main(System.String[])")]
-[assembly: SuppressMessage("Interoperability", "CA1416:Validate platform compatibility", Justification = "<Pending>", Scope = "member", Target = "~M:BountyVoiceTracker.Program.BuildDestiny2Grammar~System.Speech.Recognition.Grammar")]
+[assembly: SuppressMessage("Interoperability", "CA1416:Validate platform compatibility", Justification = "This only works on windows.", Scope = "member", Target = "~M:BountyVoiceTracker.Program.Main(System.String[])")]
+[assembly: SuppressMessage("Interoperability", "CA1416:Validate platform compatibility", Justification = "This only works on windows.", Scope = "member", Target = "~M:BountyVoiceTracker.Program.BuildDestiny2GrammarFromLoadedData~System.Speech.Recognition.Grammar")]
+[assembly: SuppressMessage("Interoperability", "CA1416:Validate platform compatibility", Justification = "This only works on windows.", Scope = "member", Target = "~M:BountyVoiceTracker.Program.Recognizer_SpeechRecognized(System.Object,System.Speech.Recognition.SpeechRecognizedEventArgs)")]
+[assembly: SuppressMessage("Interoperability", "CA1416:Validate platform compatibility", Justification = "This only works on windows.", Scope = "member", Target = "~M:BountyVoiceControl.Resources.BaseDbType.GenerateChoices~System.Speech.Recognition.Choices")]
+[assembly: SuppressMessage("Interoperability", "CA1416:Validate platform compatibility", Justification = "This only works on windows.", Scope = "member", Target = "~M:BountyVoiceTracker.Program.CombineChoicesFromDbType(System.Collections.Generic.IEnumerable{BountyVoiceControl.Resources.BaseDbType})~System.Speech.Recognition.Choices")]

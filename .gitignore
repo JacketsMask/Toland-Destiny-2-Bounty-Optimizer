@@ -2,18 +2,6 @@
 # This .gitignore file was automatically created by Microsoft(R) Visual Studio.
 ################################################################################
 
-/bin/Debug
-/.vs/BountyVoiceTracker/FileContentIndex
-/obj/Debug
-/.vs/BountyVoiceControl/v17
-/.vs/BountyVoiceControl/FileContentIndex
-/.vs/BountyVoiceControl/FileContentIndex/0f9fff23-47f1-47ab-8b3e-5aa52d5425d0.vsidx
-/.vs/BountyVoiceControl/FileContentIndex/6a42b6a9-627b-47dc-8297-054fa8da3d42.vsidx
-/.vs/BountyVoiceControl/FileContentIndex/f5e74ee6-af19-4cc0-b8fb-42e352d4478f.vsidx
-/.vs/BountyVoiceControl/FileContentIndex/read.lock
-/obj
-/obj/BountyVoiceControl.csproj.nuget.dgspec.json
-/obj/BountyVoiceControl.csproj.nuget.g.props
-/obj/BountyVoiceControl.csproj.nuget.g.targets
-/obj/project.assets.json
-/obj/project.nuget.cache
+/bin/*
+/.vs/*
+/obj/*
