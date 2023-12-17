@@ -33,28 +33,6 @@ namespace BountyVoiceTracker
         private static IEnumerable<PlayListTypes> playlistTypes;
         private static IEnumerable<WeaponTypes> weaponTypes;
 
-        static void LoadSqliteData()
-        {
-            if (!System.IO.File.Exists(DATABASE_FILE))
-            {
-                throw new System.IO.FileNotFoundException($"Unable to load {DATABASE_FILE}.");
-            }
-            using (EzDb ezDb = new EzDb(DATABASE_FILE, OperationModes.EXPLICIT_TAGGING))
-            {
-                ezDb.VerifyType<WeaponTypes>();
-                abilityTypes = ezDb.SelectAll<AbilityTypes>();
-                activityTypes = ezDb.SelectAll<ActivityTypes>();
-                ammoTypes = ezDb.SelectAll<AmmoTypes>();
-                destinationTypes = ezDb.SelectAll<DestinationTypes>();
-                elementTypes = ezDb.SelectAll<ElementTypes>();
-                eliminationTypes = ezDb.SelectAll<EliminationTypes>();
-                enemyModifierTypes = ezDb.SelectAll<EnemyModifierTypes>();
-                enemyTypes = ezDb.SelectAll<EnemyTypes>();
-                playlistTypes = ezDb.SelectAll<PlayListTypes>();
-                weaponTypes = ezDb.SelectAll<WeaponTypes>();
-            }
-        }
-
         static void Main(string[] args)
         {
             LoadSqliteData();
@@ -88,6 +66,27 @@ namespace BountyVoiceTracker
                 }
             }
         }
+        static void LoadSqliteData()
+        {
+            if (!System.IO.File.Exists(DATABASE_FILE))
+            {
+                throw new System.IO.FileNotFoundException($"Unable to load {DATABASE_FILE}.");
+            }
+            using (EzDb ezDb = new EzDb(DATABASE_FILE, OperationModes.EXPLICIT_TAGGING))
+            {
+                ezDb.VerifyType<WeaponTypes>();
+                abilityTypes = ezDb.SelectAll<AbilityTypes>();
+                activityTypes = ezDb.SelectAll<ActivityTypes>();
+                ammoTypes = ezDb.SelectAll<AmmoTypes>();
+                destinationTypes = ezDb.SelectAll<DestinationTypes>();
+                elementTypes = ezDb.SelectAll<ElementTypes>();
+                eliminationTypes = ezDb.SelectAll<EliminationTypes>();
+                enemyModifierTypes = ezDb.SelectAll<EnemyModifierTypes>();
+                enemyTypes = ezDb.SelectAll<EnemyTypes>();
+                playlistTypes = ezDb.SelectAll<PlayListTypes>();
+                weaponTypes = ezDb.SelectAll<WeaponTypes>();
+            }
+        }
 
         static Grammar BuildDestiny2GrammarFromLoadedData()
         {
@@ -106,7 +105,7 @@ namespace BountyVoiceTracker
             Choices elementChoice = CombineChoicesFromDbType(elementTypes);
             Choices eliminationChoice = CombineChoicesFromDbType(eliminationTypes);
             Choices enemyModifierChoice = CombineChoicesFromDbType(enemyModifierTypes);
-            Choices enemyChoice = CombineChoicesFromDbType(enemyModifierTypes);
+            Choices enemyChoice = CombineChoicesFromDbType(enemyTypes);
             Choices playListChoice = CombineChoicesFromDbType(playlistTypes);
             Choices weaponChoice = CombineChoicesFromDbType(weaponTypes);
 
