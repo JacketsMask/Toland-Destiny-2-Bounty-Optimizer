@@ -6,10 +6,13 @@ A prototype console application that utilizes the .NET Framework [System.Speech.
 
 ![bounty-voice-control-sample](https://github.com/JacketsMask/Destiny-2-Bounty-Voice-Control/assets/4825979/f2674af6-401c-4259-9735-03a1a48295af)
 
-Planned Features:
-- Expand bounty type data structures to include category data instead of just words.
-	- Plan "route" given bounty list, recommending locations to visit and weapon combinations.
-		- "I don't have that combination" weapon blacklist.
+Planned Features (top to bottom):
+- ~~Load data from sqlite3 database instead of hardcoded strings.~~
+- Create interpreter for recognized commands instead of storing raw recognized phrases in a string list.
+- Add support for phonetic aliasing instead of printing phonetically recognized output straight to the list.
+- Expand interpretter bounty type data structures to include category data instead of just words.
+- Plan "route" given bounty list, recommending locations to visit and weapon combinations.
+- Add user-editable blacklist file for weapon combinations to disallow.
 
 Features under consideration:
 - UI implementation (more than a voice-controlled console app).
