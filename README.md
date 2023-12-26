@@ -34,7 +34,7 @@ Here's an example of how bounty data is managed and the criteria that may be att
         - destination (europa, throne world, crucible, iron banner)
 
 ## Gathering methods
-### Voice **[Complete]**
+### Voice - **[Complete]**
 This is is implemented from the above sqlite DB file and [the BuildDestiny2GrammarFromLoadedData() method](https://github.com/JacketsMask/Destiny-2-Bounty-Voice-Control/blob/master/Program.cs#L91). Notable shortcomings to this method is the accuracy of the default Windows recognizer used, and the occasional stigma of talking to oneself while playing Destiny. I plan to continue supporting this method of bounty entry, but want to expand functionality to other requested use cases. As an upside, this is a highly accessible approach that doesn't require switching focus from the game.
 
 ### Text-input - **[Planned]**
